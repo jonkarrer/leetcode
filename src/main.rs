@@ -1,23 +1,27 @@
-fn sort(unsorted: &Vec<i32>) -> Vec<i32> {
-    let mut sorted = unsorted.clone();
+fn find_greatest_num(spread: &Vec<i32>) -> i32 {
+    let mut greatest_num = 0;
 
-    for value in unsorted {
+    for num in spread {
         let mut comparison_results: Vec<bool> = Vec::new();
 
-        for comparison_value in unsorted {
-            if value > comparison_value || value == comparison_value {
+        // Compare current num with the other numbers in the array.
+        for compare_num in spread {
+            if num > compare_num || num == compare_num {
                 comparison_results.push(true);
             }
         }
 
-        let order = sorted.len() - comparison_results.len();
-        sorted[order] = *value;
+        // If the comparison array is full of true values equal to the size of the original array
+        // ... then the current number is the greatest.
+        if &comparison_results.len() == &spread.len() {
+            greatest_num = *num;
+            break;
+        }
     }
-
-    return sorted;
+    return greatest_num;
 }
 
-fn sum(spread: &Vec<i32>) -> i32 {
+fn sum(spread: &Vec<i128>) -> i128 {
     let mut total = 0;
     for value in spread {
         total += value;
@@ -25,12 +29,12 @@ fn sum(spread: &Vec<i32>) -> i32 {
     return total;
 }
 
-fn speed_test(piles: &Vec<i32>, bites: i32, target_hours: i32) -> &str {
-    let mut hours_per_pile: Vec<i32> = Vec::new();
+fn speed_test(piles: &Vec<i32>, test_k: i128, target_hours: i128) -> &'static str {
+    let mut hours_per_pile: Vec<i128> = Vec::new();
 
     for pile in piles {
-        let time = (*pile as f32) / (bites as f32);
-        hours_per_pile.push(time.ceil() as i32);
+        let time = (*pile as f32) / (test_k as f32);
+        hours_per_pile.push(time.ceil() as i128);
     }
 
     let hours = sum(&hours_per_pile);
@@ -42,49 +46,47 @@ fn speed_test(piles: &Vec<i32>, bites: i32, target_hours: i32) -> &str {
         _ => "not sure",
     };
 
-    dbg!(hours_per_pile);
 
     return result;
 }
 
-fn range(ascending_piles: &Vec<i32>, h: i32) -> (i32, i32) {
-    let mut min_number = 1;
-    let mut max_number = ascending_piles[0];
+fn search(piles: Vec<i32>, target_hours: i128) -> i128 {
+    let mut k: i128 = 1;
+    let mut even_values: Vec<i128> = Vec::new();
+    let mut fast_value: i128 = 0;
 
-    for num in ascending_piles {
-        if num >= &min_number && num <= &max_number {
-            let speed = speed_test(&ascending_piles, *num, h);
-
-            if speed == "slow" {
-                min_number = *num;
+    loop {
+        dbg!(k);
+        let speed = speed_test(&piles, k, target_hours); 
+        if speed == "even" {
+            if even_values.len() == 1 {
                 break;
-            } 
-            if speed == "fast" {
-                max_number = *num;
             }
+            even_values.push(k);
+            k+=1;
+            continue;
+        }else if speed == "fast" {
+            fast_value = k;
+            break;
+        } else {
+            k+=1;
         }
-    }
 
-    return (min_number, max_number);
+    }
+    if even_values.len() == 0 {
+        fast_value as i128
+    } else {
+        even_values[0] as i128
+    }
 }
 
 fn main() {
-    let piles = vec![30];
-    let h = 29;
-    let sorted_piles = sort(&piles);
+    let piles: Vec<i32> = vec![332484035,524908576,855865114,632922376,222257295,690155293,112677673,679580077,337406589,290818316,877337160,901728858,679284947,688210097,692137887,718203285,629455728,941802184];
+    let h = 823855818;
+    // k = 4;
 
-    let (min_number, max_number) = range(&sorted_piles, h);
+    let result = search(piles, h);
 
-    let mut ascending_matching_values: Vec<i32> = vec![];
-    let possible_values = (min_number..=max_number).collect::<Vec<i32>>();
-    // for value in &possible_values {
-    //     let test = speed_test(&sorted_piles, *value, h);
+    dbg!(result);
 
-    //     if test == "even" {
-    //         ascending_matching_values.push(*value);
-    //     }
-    // }
-
-    // dbg!(min_number, max_number, even_number, range);
-    // dbg!(ascending_matching_values, possible_values);
 }
