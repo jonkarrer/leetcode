@@ -1,43 +1,10 @@
-fn find_greatest_num(spread: &Vec<i32>) -> i32 {
-    let mut greatest_num = 0;
-
-    for num in spread {
-        let mut comparison_results: Vec<bool> = Vec::new();
-
-        // Compare current num with the other numbers in the array.
-        for compare_num in spread {
-            if num > compare_num || num == compare_num {
-                comparison_results.push(true);
-            }
-        }
-
-        // If the comparison array is full of true values equal to the size of the original array
-        // ... then the current number is the greatest.
-        if &comparison_results.len() == &spread.len() {
-            greatest_num = *num;
-            break;
-        }
-    }
-    return greatest_num;
-}
-
-fn sum(spread: &Vec<i128>) -> i128 {
-    let mut total = 0;
-    for value in spread {
-        total += value;
-    }
-    return total;
-}
-
 fn speed_test(piles: &Vec<i32>, test_k: i128, target_hours: i128) -> &'static str {
-    let mut hours_per_pile: Vec<i128> = Vec::new();
+    let mut hours: i128 = 0;
 
     for pile in piles {
         let time = (*pile as f32) / (test_k as f32);
-        hours_per_pile.push(time.ceil() as i128);
+        hours += time.ceil() as i128;
     }
-
-    let hours = sum(&hours_per_pile);
 
     let result = match hours {
         hours if hours == target_hours => "even",
