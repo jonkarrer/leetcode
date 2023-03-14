@@ -39,10 +39,6 @@ fn speed_test(piles: &Vec<i32>, guess: i128, target_hours: i128) -> &'static str
     return result;
 }
 
-fn get_range(max_k: i32) -> Vec<i32> {
-    return (1..=max_k).collect();
-}
-
 fn guess(max_k: i32, min_k: i32, range: &Vec<i32>) -> i32 {
     let sum = max_k + min_k;
     let guess_index = (sum / 2) as usize;
@@ -50,28 +46,28 @@ fn guess(max_k: i32, min_k: i32, range: &Vec<i32>) -> i32 {
 }
 
 fn main() {
-    let piles: Vec<i32> = vec![30];
-    let h = 29;
+    let piles: Vec<i32> = vec![312884470];
+    let h = 312884469;
     // k = 4;
     
     let mut max_k = find_greatest_num(&piles);
     let mut min_k = 0;
-    let range = get_range(max_k);
+    let range = (1..=max_k).collect();
     let mut fast_guess: Vec<i32> = Vec::new();
     loop {
         let guess = guess(max_k, min_k, &range);
         let test = speed_test(&piles, guess.into(), h);
-
+        dbg!(guess,test, min_k, max_k);
         if test == "slow" {
             min_k = guess
         } else {
             if fast_guess.len() > 0 {
-                if fast_guess[0] > guess {
+                if fast_guess[0] <= guess {
+                    break
+                } else {
                     fast_guess[0] = guess;
                     max_k = guess;
                     continue
-                } else {
-                    break
                 }
             }
             fast_guess.push(guess);
