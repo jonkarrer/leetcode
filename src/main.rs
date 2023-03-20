@@ -1,78 +1,38 @@
-fn find_greatest_num(spread: &[i32]) -> i32 {
-    let mut greatest_num = 0;
-
-    for num in spread {
-        let mut comparison_results: Vec<bool> = Vec::new();
-
-        // Compare current num with the other numbers in the array.
-        for compare_num in spread {
-            if num > compare_num || num == compare_num {
-                comparison_results.push(true);
-            }
-        }
-
-        // If the comparison array is full of true values equal to the size of the original array
-        // ... then the current number is the greatest.
-        if &comparison_results.len() == &spread.len() {
-            greatest_num = *num;
-            break;
-        }
-    }
-    return greatest_num;
-}
-
-fn speed_test(piles: &Vec<i32>, guess: i128, target_hours: i128) -> &'static str {
-    let mut hours: i128 = 0;
-
-    for pile in piles {
-        let time = (*pile as f32) / (guess as f32);
-        hours += time.ceil() as i128;
-    }
-
-    let result = match hours {
-        hours if hours > target_hours => "slow",
-        hours if hours <= target_hours => "fast",
-        _ => "not sure",
-    };
-
-
-    return result;
-}
-
-fn guess(max_k: i32, min_k: i32, range: &Vec<i32>) -> i32 {
-    let sum = max_k + min_k;
-    let guess_index = (sum / 2) as usize;
-    return range[guess_index];
-}
-
 fn main() {
-    let piles: Vec<i32> = vec![312884470];
-    let h = 312884469;
-    // k = 4;
+    let flowerbed: Vec<i32> = vec![1,0,0,0,0,1,0,0,1,0,0,0,0,0];
+    let n = 1;
+    // true
     
-    let mut max_k = find_greatest_num(&piles);
-    let mut min_k = 0;
-    let range = (1..=max_k).collect();
-    let mut fast_guess: Vec<i32> = Vec::new();
-    loop {
-        let guess = guess(max_k, min_k, &range);
-        let test = speed_test(&piles, guess.into(), h);
-        dbg!(guess,test, min_k, max_k);
-        if test == "slow" {
-            min_k = guess
-        } else {
-            if fast_guess.len() > 0 {
-                if fast_guess[0] <= guess {
-                    break
-                } else {
-                    fast_guess[0] = guess;
-                    max_k = guess;
-                    continue
-                }
+    // from 1 to 1, tally the 0s
+    // 1,0 and 0,1 should not be tallied
+    let mut tally_group: Vec<i32> = Vec::new();
+    let mut group = 0;
+    for (index,flower) in flowerbed.iter().enumerate() {
+        if *flower == 0 {
+            // Look behind and foward for a 1 value
+            if index == 0 {
+                group+=1;
+                continue
             }
-            fast_guess.push(guess);
-            max_k = guess;
+            if index == flowerbed.len()-1 {
+                group+=1;
+                tally_group.push(group);
+                continue
+            }
+            let behind = flowerbed[index - 1];
+            let ahead = flowerbed[index + 1];
+            if ahead == 1 || behind == 1 {
+                // If look ahead or behind is a one, do not add to group
+                continue
+            } else {
+                // If a one is not detected, add to group
+                group+=1;
+            }
+        } else {
+            tally_group.push(group);
+            group = 0;
         }
     }
-    dbg!(fast_guess);
+    
+    dbg!(tally_group);
 }
