@@ -33,6 +33,12 @@ fn main() {
             group = 0;
         }
     }
+
+    let mut possible_plots = 0;
+    for tally in tally_group {
+        let count = tally / 2;
+        possible_plots+=count;
+    }
     
-    dbg!(tally_group);
+    dbg!(possible_plots);
 }
